@@ -47,6 +47,14 @@ The extension supports multiple languages:
 - Japanese (ja)
 - Russian (ru)
 
+## Updates
+
+### Version 5.1.0 - Manifest V3 Update
+- Updated to Manifest V3 for compatibility with Thunderbird 128+
+- Replaced browser_action with action API
+- Updated folder handling for Manifest V3 compatibility
+- Updated minimum Thunderbird version to 128.2.0
+
 ## License
 
 See [license.txt](license.txt) for licensing information.

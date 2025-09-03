@@ -1,4 +1,3 @@
-
 import { i18n } from "../modules/i18n.mjs";
 import { getPreference, setPreference } from "../modules/preferences.mjs";
 import { registerMailFolderPicker } from "../modules/folderPicker.mjs";
@@ -166,7 +165,8 @@ async function init() {
     // Replace locale strings.
     i18n.updateDocument();
     
-    const accounts = await browser.accounts.list(false);
+    // For Manifest V3, we need to explicitly set includeSubFolders to true if we want subfolders
+    const accounts = await browser.accounts.list(true);
     const elementEventMap = {
         tabList: { type: 'click', callback: tabListClickHandler },
     }

@@ -1,6 +1,20 @@
 var { FolderUtils } = ChromeUtils.importESModule(
   "resource:///modules/FolderUtils.sys.mjs"
 );
+var { VirtualFolderHelper } = ChromeUtils.importESModule(
+  "resource:///modules/VirtualFolderWrapper.sys.mjs"
+);
+var { MailServices } = ChromeUtils.importESModule(
+  "resource:///modules/MailServices.sys.mjs"
+);
+var { Components, Services } = ChromeUtils.importESModule(
+  "resource://gre/modules/Services.sys.mjs"
+);
+var { ExtensionCommon } = ChromeUtils.importESModule(
+  "resource://gre/modules/ExtensionCommon.sys.mjs"
+);
+
+const Cr = Components.results;
 
 class UrlListener {
   constructor() {

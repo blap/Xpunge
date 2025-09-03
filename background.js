@@ -32,10 +32,10 @@ await browser.storage.local.set({
   lastTimerRun: 0,
 })
 
-/* Browser Action
- * --------------
- * Add a browser action for the multi expunge action to the unified toolbar.
+/* Action
+ * ------
+ * Add an action for the multi expunge action to the unified toolbar.
  */
-browser.browserAction.onClicked.addListener(() => {
+browser.action.onClicked.addListener(() => {
   xpungeMultiple();
 });

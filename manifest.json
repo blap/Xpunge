@@ -1,11 +1,11 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
 
   "browser_specific_settings": {
     "gecko": {
       "id": "{786abda0-fd14-d247-bf69-38b2fc18491b}",
       "strict_min_version": "128.2.0",
-      "strict_max_version": "131.*"
+      "strict_max_version": "141.*"
     }
   },
 
@@ -14,7 +14,7 @@
 
   "description": "Empties the Trash and Junk folders, and compacts folders in multiple Thunderbird accounts.",
 
-  "version": "5.0.2",
+  "version": "5.1.0",
 
   "author": "Theodore Tegos, John Bieling",
 
@@ -25,7 +25,7 @@
     "32": "icons/icon32.png"
   },
 
-  "browser_action": {
+  "action": {
     "default_title": "MultiXpunge",
     "default_icon": {
       "16": "icons/xpunge_multi_toolbar_small.png",
