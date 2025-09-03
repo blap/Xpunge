@@ -22,11 +22,20 @@ export async function xpungeAccount(folder) {
             return;
         }
     }
-    // Some of the xpunge action (empty trash and junk) probably do not need to
-    // be Experiments.
+    // Some of the xpunge action (empty trash and junk) probably do not need to be Experiments.
     if (preferences.empty_junk) { await browser.Xpunge.emptyJunk(folder); }
     if (preferences.empty_trash) { await browser.Xpunge.emptyTrash(folder); }
-    if (preferences.compact_folders) { await browser.Xpunge.compact(folder); }
+    if (preferences.compact_folders) { 
+        try {
+            await browser.Xpunge.compact(folder);
+        } catch (error) {
+            console.error("XPUNGE: Error during compact operation:", error);
+            // Show a more user-friendly error message
+            const account = await browser.accounts.get(folder.accountId);
+            const accountName = account != null ? account.name : `${folder.accountId} - UNKNOWN`;
+            console.info(`XPUNGE: Failed to compact folders for account: ${accountName}. Please ensure the account is properly connected and try again.`);
+        }
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -169,19 +178,46 @@ export async function xpungeMultiple() {
 
 async function emptyMultipleJunkFolders(folders) {
     for (const folder of folders) {
-        await browser.Xpunge.emptyJunk(folder);
+        try {
+            await browser.Xpunge.emptyJunk(folder);
+        } catch (error) {
+            console.error("XPUNGE: Error emptying junk folder:", error);
+            // Continue with other folders even if one fails
+        }
     }
 }
 
 async function emptyMultipleTrashFolders(folders) {
     for (const folder of folders) {
-        await browser.Xpunge.emptyTrash(folder);
+        try {
+            await browser.Xpunge.emptyTrash(folder);
+        } catch (error) {
+            console.error("XPUNGE: Error emptying trash folder:", error);
+            // Continue with other folders even if one fails
+        }
     }
 }
 
 async function compactMultipleFolders(folders) {
     for (const folder of folders) {
-        await browser.Xpunge.compact(folder);
+        try {
+            await browser.Xpunge.compact(folder);
+        } catch (error) {
+            console.error("XPUNGE: Error compacting folder:", error);
+            // Continue with other folders even if one fails
+            // Show a more user-friendly error message
+            try {
+                const account = await browser.accounts.get(folder.accountId);
+                const accountName = account != null ? account.name : `${folder.accountId} - UNKNOWN`;
+                if (folder.isRoot) {
+                    console.info(`XPUNGE: Failed to compact all folders for account: ${accountName}.`);
+                } else {
+                    console.info(`XPUNGE: Failed to compact folder on account: ${accountName}.`);
+                }
+            } catch (e) {
+                console.info("XPUNGE: Failed to compact folder - unable to identify account.");
+            }
+        }
     }
 }
 

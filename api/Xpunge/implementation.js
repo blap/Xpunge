@@ -25,7 +25,7 @@ class UrlListener {
     if (Components.isSuccessCode(exitCode)) {
       this.PromiseWithResolvers.resolve();
     } else {
-      this.PromiseWithResolvers.reject();
+      this.PromiseWithResolvers.reject(exitCode); // Fix Bugzilla Bug 1977840 - Pass the error code
     }
   }
   isDone() {
@@ -163,6 +163,36 @@ var Xpunge = class extends ExtensionCommon.ExtensionAPI {
             folder.path
           );
           
+          // Workaround for Bugzilla Bug 1977840 - Refresh folder before compacting
+          // This helps ensure the folder is properly initialized before compacting
+          try {
+            if (nativeFolder.server.type === "imap" && !nativeFolder.isServer) {
+              // For IMAP folders, refresh the folder to ensure it's properly initialized
+              await new Promise((resolve, reject) => {
+                let refreshListener = {
+                  OnStartRunningUrl() {},
+                  OnStopRunningUrl(url, exitCode) {
+                    if (Components.isSuccessCode(exitCode)) {
+                      resolve();
+                    } else {
+                      // Even if refresh fails, we continue with compacting
+                      resolve(); // Don't fail the entire operation
+                    }
+                  }
+                };
+                try {
+                  nativeFolder.refresh(refreshListener);
+                } catch (e) {
+                  // If refresh method is not available or fails, continue anyway
+                  resolve();
+                }
+              });
+            }
+          } catch (e) {
+            // Ignore refresh errors, continue with compacting
+            console.debug("XPUNGE: Folder refresh failed, continuing with compact operation:", e);
+          }
+          
           if (nativeFolder.isServer) {
             // Compact the entire account.
             try {
@@ -172,7 +202,13 @@ var Xpunge = class extends ExtensionCommon.ExtensionAPI {
               await urlListener.isDone();
               console.info("XPUNGE: Done");
             } catch (ex) {
-              console.info("XPUNGE: Failed compacting all folders for account:", nativeFolder.server.prettyName, ex);
+              // Handle the specific error code 2153054245 from Bugzilla Bug 1977840
+              if (ex === 2153054245) {
+                console.info("XPUNGE: Failed compacting all folders for account:", nativeFolder.server.prettyName, 
+                  "Error: Folder not refreshed. Please select the junk folder in Thunderbird first.");
+              } else {
+                console.info("XPUNGE: Failed compacting all folders for account:", nativeFolder.server.prettyName, ex);
+              }
             }
           } else {
             // Compact the specified folder
@@ -189,7 +225,13 @@ var Xpunge = class extends ExtensionCommon.ExtensionAPI {
               await urlListener.isDone();
               console.info("XPUNGE: Done");
             } catch (ex) {
-              console.info("XPUNGE: Failed compacting folder (", nativeFolder.prettyName, ") on account:", nativeFolder.server.prettyName, ex);
+              // Handle the specific error code 2153054245 from Bugzilla Bug 1977840
+              if (ex === 2153054245) {
+                console.info("XPUNGE: Failed compacting folder (", nativeFolder.prettyName, ") on account:", nativeFolder.server.prettyName,
+                  "Error: Folder not refreshed. Please select the folder in Thunderbird first.");
+              } else {
+                console.info("XPUNGE: Failed compacting folder (", nativeFolder.prettyName, ") on account:", nativeFolder.server.prettyName, ex);
+              }
             }
           }
         },
