@@ -1,0 +1,6 @@
+@echo off
+echo Building Xpunge Thunderbird Extension...
+powershell -command "Compress-Archive -Path * -DestinationPath xpunge-tb.zip -Exclude build.bat,*.git*,*.xpi"
+echo Renaming to .xpi format...
+ren xpunge-tb.zip xpunge-tb.xpi
+echo Build complete! Extension package: xpunge-tb.xpi

@@ -23,8 +23,10 @@ Xpunge is a Thunderbird extension that empties the Trash and Junk folders, and c
 
 To build the extension:
 1. Clone this repository
-2. Package all files into a `.zip` file
+2. Run the build script `build.bat` (Windows) or manually package all files into a `.zip` file
 3. Rename the extension to `.xpi`
+
+The build script will create a properly packaged extension file named `xpunge-tb.xpi`.
 
 ## Configuration
 
