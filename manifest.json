@@ -1,0 +1,71 @@
+{
+  "manifest_version": 2,
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{786abda0-fd14-d247-bf69-38b2fc18491b}",
+      "strict_min_version": "128.2.0",
+      "strict_max_version": "131.*"
+    }
+  },
+
+  "name": "Xpunge",
+  "default_locale": "en-US",
+
+  "description": "Empties the Trash and Junk folders, and compacts folders in multiple Thunderbird accounts.",
+
+  "version": "5.0.2",
+
+  "author": "Theodore Tegos, John Bieling",
+
+  "homepage_url": "http://www.theodoretegos.net/mozilla/tb/index.html",
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png"
+  },
+
+  "browser_action": {
+    "default_title": "MultiXpunge",
+    "default_icon": {
+      "16": "icons/xpunge_multi_toolbar_small.png",
+      "24": "icons/xpunge_multi_toolbar_large.png"
+    }
+  },
+
+  "permissions": [
+    "accountsRead",
+    "alarms",
+    "menus",
+    "storage"
+  ],
+
+  "experiment_apis": {
+    "Xpunge": {
+      "schema": "api/Xpunge/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["Xpunge"]],
+        "script": "api/Xpunge/implementation.js"
+      }
+    },
+    "LegacyPrefsMigrator": {
+      "schema": "api/LegacyPrefsMigrator/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["LegacyPrefsMigrator"]],
+        "script": "api/LegacyPrefsMigrator/implementation.js"
+      }
+    }
+  },
+  "options_ui": {
+    "page": "/options/options.html",
+    "browser_style": true
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "type": "module"
+  }
+}
